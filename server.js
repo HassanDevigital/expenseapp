@@ -1,16 +1,20 @@
 const express = require('express');
-const favicon = require('express-favicon');
-const path = require('path');
-const port = process.env.PORT || 8080;
+const dotenv = require('dotenv');
+const colors = require('colors');
+const morgan = require('morgan');
+const connectDB = require('./config/db');
+
+
+
+dotenv.config({path: './config/config.env'})
+connectDB();
 const app = express();
-app.use(favicon(__dirname + '/build/favicon.ico'));
-// the __dirname is the current directory from where the script is running
-app.use(express.static(__dirname));
-app.use(express.static(path.join(__dirname, 'build')));
-app.get('/ping', function (req, res) {
- return res.send('pong');
-});
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
-app.listen(port);
+const transactions = require('./routes/transactions')
+
+app.use('/api/v1/transactions',transactions )
+
+
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, console.log(`server is runnig on ${process.env.NODE_ENV} mode and on ${PORT} port`.yellow.bold))
